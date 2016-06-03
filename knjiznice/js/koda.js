@@ -27,6 +27,9 @@ var aliPrvi = 0;
 var aliDrugi = 0;
 var aliTretji = 0;
 
+var meritve1 = [[130,133,132,140,130,130,135,128],[110,112,108,115,120,121,116,114],[140,144,145,143,150,148,151,140]];
+var meritve2 = [[80,81,82,83,80,79,80,78],[60,62,64,60,67,70,66,64],[100,95,97,94,102,100,99,97]];
+
 /**
  * Generator podatkov za novega pacienta, ki bo uporabljal aplikacijo. Pri
  * generiranju podatkov je potrebno najprej kreirati novega pacienta z
@@ -35,14 +38,6 @@ var aliTretji = 0;
  * @param stPacienta zaporedna številka pacienta (1, 2 ali 3)
  * @return ehrId generiranega pacienta
  */
- 
- var compositionData1 = {
-    "ctx/time": "2014-3-19T13:10Z",
-    "ctx/language": "en",
-    "ctx/territory": "SI",
-    "vital_signs/blood_pressure/any_event/systolic": 130,
-    "vital_signs/blood_pressure/any_event/diastolic": 90
-};
  
 var ehrId;
 function generirajPodatke(stPacienta) {
@@ -56,6 +51,19 @@ function generirajPodatke(stPacienta) {
         aliTretji = 1;
     }
     ehrId = "";
+
+    naredibolnika(stPacienta, function(){
+        for(var i = 0;i < 8;i ++){
+            dodajPodatke(stPacienta, i, function(){
+                console.log("*");
+            });
+        }
+    });
+    
+  return ehrId;
+}
+
+function naredibolnika(stPacienta, callback){
     var sessionId = getSessionId();
     
     $.ajaxSetup({
@@ -82,8 +90,8 @@ function generirajPodatke(stPacienta) {
             
             // build party data
             var partyData = {
-                firstNames: "Maj",
-                lastNames: "Antesic",
+                firstNames: "Bolnik"+stPacienta,
+                lastNames: "Priimek",
                 dateOfBirth: "1996-6-14T19:30",
                 partyAdditionalInfo: [
                     {
@@ -101,32 +109,48 @@ function generirajPodatke(stPacienta) {
                 success: function (party) {
                     if (party.action == 'CREATE') {
     		            console.log("Uspešno kreiran EHR '" + ehrId + "'.");
+    		            callback();
                     }
                 }
             });
-            
-            var queryParams = {
-                "ehrId": ehrId,
-                templateId: 'Vital Signs',
-                format: 'FLAT',
-                committer: 'Belinda Nurse'
-            };
-                
-            $.ajax({
-                url: baseUrl + "/composition?" + $.param(queryParams),
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(compositionData1),
-                success: function (res) {
-            }
-        });
-        
+        }
+    });
+}
+
+function dodajPodatke(stPacienta, i, callback){
+    
+    var compositionData = {
+        "ctx/time": "2016-6-2T"+(8+2*i)+":"+00+"Z",
+        "ctx/language": "en",
+        "ctx/territory": "SI",
+        "vital_signs/blood_pressure/any_event/systolic": meritve1[stPacienta-1][i],
+        "vital_signs/blood_pressure/any_event/diastolic": meritve2[stPacienta-1][i]
+    };
+    
+    var sessionId = getSessionId();
+    $.ajaxSetup({
+        headers: {
+        "Ehr-Session": sessionId
         }
     });
     
-  return ehrId;
+    var queryParams = {
+        "ehrId": ehrId,
+        templateId: 'Vital Signs',
+        format: 'FLAT',
+        committer: 'Belinda Nurse'
+    };
+        
+    $.ajax({
+        url: baseUrl + "/composition?" + $.param(queryParams),
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify(compositionData),
+        success: function (res) {
+            callback();
+        }
+    });
 }
-
 
 function izberiEhrId() {
 	var elem;
@@ -160,6 +184,11 @@ function izberiEhrId() {
 	}
 }
 
+function pokaziMeritev(i){
+    $("#zgornji"+i).toggle();
+    $("#spodnji"+i).toggle();
+}
+
 function preberiMeritveVitalnihZnakov(){
     var sessionId = getSessionId();
     ehrId = $("#meritveVitalnihZnakovEHRid").val();
@@ -172,9 +201,15 @@ function preberiMeritveVitalnihZnakov(){
         url: baseUrl + "/view/" + ehrId + "/blood_pressure",
         type: 'GET',
         success: function (res) {
-            var results = "<table class='table table-striped table-hover'><tr><th>Datum in ura</th><th class='text-right'>Krvni tlak</th></tr>";
+            var results = "<table class='table table-hover'><tr><th>Datum in ura</th><th class='text-right'>Krvni tlak</th></tr>";
             for (var i in res) {
-                results += "<tr><td class='text-left'>" + res[i].time + "</td><td class='text-right'>" +res[i].systolic + '/' + res[i].diastolic + res[i].unit + "</td>";
+                results += "<tr>\
+                                <td class='text-left' rowspan='2' ><button onclick='pokaziMeritev("+i+")'>"+res[i].time+"</button></td>\
+                                <td class='text-right' id='zgornji"+i+"' style='display:none'>"+"zgornji (sistolični): "+res[i].systolic+" "+res[i].unit+"</td>\
+                            </tr>\
+                            <tr>\
+                                <td class='text-right' id='spodnji"+i+"' style='display:none'>"+"spodnji (diastolični): "+res[i].diastolic+" "+res[i].unit+"</td>\
+                            </tr>";
             }
             results += "</table>";
 			$("#result").html(results);
