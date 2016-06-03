@@ -55,7 +55,9 @@ function generirajPodatke(stPacienta) {
     naredibolnika(stPacienta, function(){
         for(var i = 0;i < 8;i ++){
             dodajPodatke(stPacienta, i, function(){
-                console.log("*");
+                if(i == 8){ 
+                    $("#GenerirajSporocilo").html("<span class='obvestilo "+"label label-default'>Uspešno generiran bolnik "+stPacienta+".</span>").fadeOut(10000);
+                }
             });
         }
     });
