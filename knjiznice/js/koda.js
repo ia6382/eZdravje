@@ -161,7 +161,7 @@ function izberiEhrId() {
             elem.value = ehrIdPrvi;
         }
         else{
-            elem.value = "0246d2f5-5658-4abd-8cdc-0cfaf1118fda";
+            elem.value = "a8fcac46-839c-440d-88fc-eed38d52ea33";
         }
 	}
 	if (bolnik == "2"){
@@ -170,7 +170,7 @@ function izberiEhrId() {
             elem.value = ehrIdDrugi;	
 	    }
 	    else{
-	        elem.value = "49faacea-d813-448d-85b6-2170e95e9911a";
+	        elem.value = "92b539c8-0691-42d7-aa0a-ea252a850b0e";
 	    }
 	}
 	if (bolnik == "3"){
@@ -179,7 +179,7 @@ function izberiEhrId() {
             elem.value = ehrIdTretji;	
 	    }
 	    else{
-	        elem.value = "27220462-d399-4120-a93e-de9b2ec18e9c";
+	        elem.value = "18d31071-e047-491a-b2a6-4e377aa8162b";
 	    }	
 	}
 }
@@ -201,10 +201,20 @@ function preberiMeritveVitalnihZnakov(){
         url: baseUrl + "/view/" + ehrId + "/blood_pressure",
         type: 'GET',
         success: function (res) {
+            
             var results = "<table class='table table-hover'><tr><th>Datum in ura</th><th class='text-right'>Krvni tlak</th></tr>";
+            var stPodatkov = res.length-1;
+            var podatki = new Array(res.length);
+
             for (var i in res) {
+                podatki[i] = {"category": (res[stPodatkov-i].time).substring(11,16),
+							"column-1": res[stPodatkov-i].systolic,
+							"column-2": res[stPodatkov-i].diastolic
+                            };
+                
+                
                 results += "<tr>\
-                                <td class='text-left' rowspan='2' ><button onclick='pokaziMeritev("+i+")'>"+res[i].time+"</button></td>\
+                                <td class='text-left' rowspan='2' ><button onclick='pokaziMeritev("+i+")'>"+(res[i].time).substring(0,10)+"; "+(res[i].time).substring(11,16)+"</button></td>\
                                 <td class='text-right' id='zgornji"+i+"' style='display:none'>"+"zgornji (sistolični): "+res[i].systolic+" "+res[i].unit+"</td>\
                             </tr>\
                             <tr>\
@@ -213,7 +223,79 @@ function preberiMeritveVitalnihZnakov(){
             }
             results += "</table>";
 			$("#result").html(results);
-			$("#kreirajSporocilo").html("<span class='obvestilo label label-success fade-in'>Prikazovanje Meritev za: " + ehrId + "'.</span>");
+			
+            //-----kreiranje grafa
+            AmCharts.makeChart("chartdiv",
+				{
+					"type": "serial",
+					"categoryField": "category",
+					"colors": [
+                		"#D80000",
+                		"#FCD202",
+                		"#B0DE09",
+                		"#0D8ECF",
+                		"#2A0CD0",
+                		"#CD0D74",
+                		"#CC0000",
+                		"#00CC00",
+                		"#0000CC",
+                		"#DDDDDD",
+                		"#999999",
+                		"#333333",
+                		"#990000"
+            	    ],
+					"startDuration": 1,
+					"categoryAxis": {
+						"gridPosition": "start"
+					},
+					"trendLines": [],
+					"graphs": [
+						{
+							"balloonText": "[[title]] ob [[category]], vrednost [[value]]",
+							"bullet": "round",
+							"lineThickness": "6",
+							"id": "AmGraph-1",
+							"title": "sistolični tlak",
+							"valueField": "column-1",
+							"fillAlphas": 0.7,
+							"lineAlpha": 0
+						},
+						{
+							"balloonText": "[[title]] ob [[category]], vrednost [[value]]",
+							"bullet": "square",
+							"lineThickness": "6",
+							"id": "AmGraph-2",
+							"title": "diastolični tlak",
+							"valueField": "column-2",
+							"fillAlphas": 0.7,
+							"lineAlpha": 0
+						}
+					],
+					"guides": [],
+					"valueAxes": [
+						{
+							"id": "ValueAxis-1",
+							"title": "mm[Hg]"
+						}
+					],
+					"allLabels": [],
+					"balloon": {},
+					"legend": {
+						"enabled": true,
+						"useGraphSettings": true
+					},
+					"titles": [
+						{
+							"id": "Title-1",
+							"size": 15,
+							"text": "Krvni Tlak"
+						}
+					],
+					"dataProvider": podatki
+				}
+			);
+		//-----konec grafa
+			
         }
     });
 }
