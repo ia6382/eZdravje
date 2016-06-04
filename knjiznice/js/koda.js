@@ -260,7 +260,7 @@ function preberiMeritveVitalnihZnakov(){
             var podatki = new Array(res.length);
 
             for (var i in res) {
-                podatki[i] = {"category": (res[i].time).substring(5,10)+" ob "+(res[i].time).substring(11,16),
+                podatki[i] = {"category": (res[stPodatkov-i].time).substring(5,10)+" ob "+(res[stPodatkov-i].time).substring(11,16),
 							"column-1": res[stPodatkov-i].systolic,
 							"column-2": res[stPodatkov-i].diastolic
                             };
