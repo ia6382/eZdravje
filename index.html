@@ -6,6 +6,7 @@
   <link href="knjiznice/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {padding-top: 70px;}
+    
   </style>
   
   <!-- amCharts javascript sources -->
@@ -47,6 +48,24 @@
         
         <div class="panel panel-default">
           <div class="panel-heading">
+            <h3 class="panel-title">Ročni vnos meritev</h3>
+          </div>
+          <div class="panel-body text-left">
+            <!-- -->
+            <span class="label label-default">EHR ID</span><input id="EHR" type="text" class="form-control input-mini">
+						<span class="label label-default">Datum in ura, format: leto-mesec-danTura:minuteZ</span><input id="DatumInUra" type="text" class="form-control input-mini" placeholder="2016-6-6T16:30Z">
+						<span class="label label-default">Sistolični krvni tlak</span><input id="TlakSistolicni" type="text" class="form-control input-mini">
+						<span class="label label-default">Diastolični krvni tlak</span><input id="TlakDiastolicni" type="text" class="form-control input-mini">
+						<div class="text-center">
+						<button type="button" class="btn btn-danger btn-xs text-center" onclick="dodajMeritve()">Dodaj meritve za ta EHR ID</button>
+						<span id="dodajMeritveSporocilo"></span>
+						</div>
+            <!-- -->
+          </div>
+        </div>
+        
+        <div class="panel panel-default">
+          <div class="panel-heading">
             <h3 class="panel-title">Generiranje pacientov</h3>
           </div>
           <div class="panel-body">
@@ -84,7 +103,7 @@
           </div>
         </div>
         
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="panel1" style="display:none">
           <div class="panel-heading">
             <h3 class="panel-title">Prikaz meritev</h3>
           </div>
@@ -95,13 +114,41 @@
           </div>
         </div>
         
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="panel2" style="display:none">
           <div class="panel-heading">
             <h3 class="panel-title">Graf</h3>
           </div>
           <div class="panel-body">
             <!-- -->
-            <div id="chartdiv" style="width: 100%; height: 400px; background-color: #FFFFFF;" ></div>
+            <div id="chartdiv" style="width: 100%; height: 600px; background-color: #FFFFFF;" ></div>
+            <!-- -->
+          </div>
+        </div>
+        
+        <div class="panel panel-default" id="panel3" style="display:none" >
+          <div class="panel-heading">
+            <h3 class="panel-title">Rezultati</h3>
+          </div>
+          <div class="panel-body">
+            <!-- -->
+            <div id="razlaga">
+              <p>tralalalal</p>
+            </div>
+            <div>
+              <button type="button" class="btn btn-danger btn-sm "  onclick="pokaziZemljevid('pharmacy')">Lekarna</button>
+              <button type="button" class="btn btn-danger btn-sm "  onclick="pokaziZemljevid('hospital')">Bolnica</button>
+            </div>
+            <!-- -->
+          </div>
+        </div>
+        
+        <div class="panel panel-default" id="panel4" style="display:none" ">
+          <div class="panel-heading">
+            <h3 class="panel-title">Bližnji zdravstveni objekti.</h3>
+          </div>
+          <div class="panel-body">
+            <!-- -->
+            <div id="map" style="width: 100%; height: 600px; "></div>
             <!-- -->
           </div>
         </div>
@@ -110,10 +157,7 @@
     </div>
   </div>
   
-  <script>
-    
-  </script>
   <!-- KONEC: Vsebina aplikacije -->
-
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDKAWQ-VebES73XR4NiDB4VYFlIUzw54SE&libraries=places"></script>
 </body>
 </html>
