@@ -28,7 +28,7 @@ var aliDrugi = 0;
 var aliTretji = 0;
 
 var meritve1 = [[130,133,132,140,130,130,135,128],[110,112,108,115,120,121,116,114],[140,144,145,143,150,148,151,140]];
-var meritve2 = [[80,81,82,83,80,79,80,78],[60,62,64,60,67,70,66,64],[100,95,97,94,102,100,99,97]];
+var meritve2 = [[80,81,82,83,80,79,80,78],[55,62,64,55,67,70,66,64],[100,95,97,94,102,100,99,97]];
 
 var diagnoza = 2; // 1 je nizek,2 je dober, 3 je visok
 
@@ -43,7 +43,64 @@ var diagnoza = 2; // 1 je nizek,2 je dober, 3 je visok
  
 var ehrId;
 
-function dodajMeritve() {
+function pokaziGeneriranje(){
+    $("#panelG").toggle();
+}
+
+function pokaziRocniVnos(){
+    $("#panelR").toggle();
+}
+
+function naredibolnikaRocno(){
+    var sessionId = getSessionId();
+    var ehrIdRocni
+    
+    if (!$("#ime").val() || !$("#priimek").val() || !$("#datumRojstva").val()) {
+		$("#narediSporocilo").html("<span class='obvestilo "+"label label-default'>Izpolnite zahtevana polja.</span>").fadeOut(10000);
+	} else {
+        $.ajaxSetup({
+            headers: {
+            "Ehr-Session": sessionId
+            }
+        });
+        
+        $.ajax({
+            url: baseUrl + "/ehr",
+            type: 'POST',
+            success: function (data) {
+                ehrIdRocni = data.ehrId;
+                
+                // build party data
+                var partyData = {
+                    firstNames: $("#ime").val(),
+                    lastNames: $("#priimek").val(),
+                    dateOfBirth: $("#datumRojstva").val(),
+                    partyAdditionalInfo: [
+                        {
+                            key: "ehrId",
+                            value: ehrIdRocni
+                        }
+                    ]
+                };
+                
+                $.ajax({
+                    url: baseUrl + "/demographics/party",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(partyData),
+                    success: function (party) {
+                        if (party.action == 'CREATE') {
+                            $("#narediSporocilo").html("<span class='obvestilo "+"label label-default'>Uspešno kreiran EHR " + ehrIdRocni + ".</span>");
+        		            console.log("Uspešno kreiran EHR '" + ehrIdRocni + "'.");
+                        }
+                    }
+                });
+            }
+        });
+	}
+}
+
+function dodajMeritveRocno() {
 	var sessionId = getSessionId();
 	
     var ehrIdRocni = $("#EHR").val();
@@ -218,7 +275,7 @@ function izberiEhrId() {
             elem.value = ehrIdDrugi;	
 	    }
 	    else{
-	        elem.value = "92b539c8-0691-42d7-aa0a-ea252a850b0e";
+	        elem.value = "59a53d28-0631-4556-97c4-653566f98fd1";
 	    }
 	}
 	if (bolnik == "3"){
@@ -358,7 +415,7 @@ function preberiMeritveVitalnihZnakov(){
 							"id": "ValueAxis-1",
 							"title": "mm Hg",
 							"maximum": 180,
-							"minimum": 60
+							"minimum": 50
 						}
 					],
 					"allLabels": [],
@@ -377,8 +434,31 @@ function preberiMeritveVitalnihZnakov(){
 					"dataProvider": podatki
 				}
 			);
-		//-----konec grafa
-			$("#razlaga").html("<p>"+diagnoza+"</p>");
+		//-----konec grafa,zacetek obrazlage rezultatov
+		    if(diagnoza == 1){ //nizek
+		        $("#gumbiMap").show();
+		        $("#razlaga").html("<p> Aplikacija je zaznala, da imate <strong>nenavadno nizek krvni tlak</strong>.\
+		        S tem ni nič narobe, če pa občutite kakšne neželene simptome razmisljite o obisku zdravnika\
+		        ali nakupu potrebnih zdravil v lekarni, če vam je zdravnik že napisal recept. \
+		        Ob pritisku na izbrano zdravsteno ustanovo vam bo aplikacija poskušala poiskati \
+		        lekarne ali bolnice v vaši bližini.</p><p class='text-muted'>Za delovanje te funkcionalnosti\
+		        morate dovoliti brskalniku da dovoli lociranje vaše lokacije in nekaj časa za nalaganje zemljevida.</p>");
+		    }
+		    else if(diagnoza == 2){ //normalen
+		        $("#razlaga").html("<p> Aplikacija je zaznala, da imate krvni tlak <strong>v mejah normale</strong>. \
+		        Kljub temu poskušajte znižati ali vsaj ohraniti trenutno stanje za boljšo kakovost življenja. </p>");
+		    }
+		    else{ //visok
+		        $("#gumbiMap").show();
+		        $("#razlaga").html("<p> Aplikacija je zaznala, da imate krvni tlak <strong>višji od normalne meje</strong>.\
+		        Svetujem vam, da razmisljite o obisku zdravnika\
+		        ali nakupu potrebnih zdravil v lekarni, če vam je zdravnik že napisal recept. \
+		        Visok krvni tlak lahko resno škoduje vašemu zdravju. \
+		        Ob pritisku na izbrano zdravsteno ustanovo vam bo aplikacija poskušala poiskati \
+		        lekarne ali bolnice v vaši bližini.</p><p class='text-muted'>Za delovanje te funkcionalnosti\
+		        morate dovoliti brskalniku da dovoli lociranje vaše lokacije in nekaj časa za nalaganje zemljevida.</p>");
+		    }
+			
         }
     });
     

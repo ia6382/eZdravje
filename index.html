@@ -35,6 +35,8 @@
         <ul class="nav navbar-nav">
           <li><a href="opis.html" style="color: #D80000;" >Opis ideje</a></li>
           <li><a href="nacrt.html" style="color: #D80000;" >Načrt informacijske rešitve</a></li>
+          <li><a href="#panelG" onclick="pokaziGeneriranje();" style="color: #D80000;" >#Generiranje podatkov</a></li>
+          <li><a href="#panelR" onclick="pokaziRocniVnos();" style="color: #D80000;" >#Ročni vnos meritev</a></li>
         </ul>
       </div>
     </div>
@@ -46,10 +48,19 @@
     <div class="row">
       <div class="col-lg-12 text-center">
         
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="panelR" style="display:none">
           <div class="panel-heading">
             <h3 class="panel-title">Ročni vnos meritev</h3>
           </div>
+          <div class="panel-body text-left">
+						<span class="label label-default">Ime</span><input id="ime" type="text" class="form-control input-mini">
+						<span class="label label-default">Priimek</span><input id="priimek" type="text" class="form-control">
+						<span class="label label-default">Datum rojstva, format: leto-mesec-danTura:minuteZ</span><input id="datumRojstva" type="text" class="form-control" placeholder="1994-07-24T00:00">
+						<div class="text-center">
+						  <button type="button" class="btn btn-danger btn-xs" onclick="naredibolnikaRocno()">Registriraj novega bolnika</button>
+						  <span id="narediSporocilo"></span>
+				  	</div>
+				  </div>	
           <div class="panel-body text-left">
             <!-- -->
             <span class="label label-default">EHR ID</span><input id="EHR" type="text" class="form-control input-mini">
@@ -57,14 +68,14 @@
 						<span class="label label-default">Sistolični krvni tlak</span><input id="TlakSistolicni" type="text" class="form-control input-mini">
 						<span class="label label-default">Diastolični krvni tlak</span><input id="TlakDiastolicni" type="text" class="form-control input-mini">
 						<div class="text-center">
-						<button type="button" class="btn btn-danger btn-xs text-center" onclick="dodajMeritve()">Dodaj meritve za ta EHR ID</button>
-						<span id="dodajMeritveSporocilo"></span>
+						  <button type="button" class="btn btn-danger btn-xs text-center" onclick="dodajMeritveRocno()">Dodaj meritve za vnešeni EHR ID</button>
+						  <span id="dodajMeritveSporocilo"></span>
 						</div>
             <!-- -->
           </div>
         </div>
         
-        <div class="panel panel-default">
+        <div class="panel panel-default" id="panelG" style="display:none">
           <div class="panel-heading">
             <h3 class="panel-title">Generiranje pacientov</h3>
           </div>
@@ -134,7 +145,7 @@
             <div id="razlaga">
               <p>tralalalal</p>
             </div>
-            <div>
+            <div id="gumbiMap" style="display:none">
               <button type="button" class="btn btn-danger btn-sm "  onclick="pokaziZemljevid('pharmacy')">Lekarna</button>
               <button type="button" class="btn btn-danger btn-sm "  onclick="pokaziZemljevid('hospital')">Bolnica</button>
             </div>
@@ -142,7 +153,7 @@
           </div>
         </div>
         
-        <div class="panel panel-default" id="panel4" style="display:none" ">
+        <div class="panel panel-default" id="panel4" style="display:none" >
           <div class="panel-heading">
             <h3 class="panel-title">Bližnji zdravstveni objekti.</h3>
           </div>
