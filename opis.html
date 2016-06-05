@@ -46,7 +46,22 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Opis ideje, ki jo aplikacija podpira -->
-            <p><strong>TO-DO</strong>: Na tem mestu je potrebno dodati <strong>osnovni opis ideje rešitve</strong> (kakšen je osnovni SCENARIJ UPORABE, KDO je ciljna publika, za kakšen NAMEN se aplikacija uporablja).</p><p class="text-muted">Opis naj ne bo daljši od 200 besed.</p>
+            <p>
+            Idejo za aplikacijo sem dobil, ko mi je osebni zdravnik svetoval naj si merim krvni tlak. 
+            Dobil sem knjižico z praznimi grafi in tabelami v katere sem ročno pisal meritve.
+            Ob koncu tedna sem moral to knjižico osebno prinesti zdravniku. 
+            <p>
+            </p>
+            Tak način merjenja srčnega tlaka je zamuden zato sem z mojo aplikacijo 
+            želel proces poenostaviti. Aplikacija je namenjena uporabnikom, ki so že diagnosticirani z nevarnim krvnim tlakom in si rabijo redno meriti tlak,
+            kot tudi tistim, ki želijo le preveriti stanje svojega tlaka. Obem tipom uporabnikom aplikacija olajša proces merjenja, tolmačenja meritev in pošiljanja rezultatov
+            zdravniški ordinaciji, ki uporablja EhrScape platformo.
+            <p>
+            </p>
+            Uporabnik kreira nov EhrID ali uporabi že obstoječega in nato vnaša meritve v vnaprej pripravljen obrazec, sproti 
+            pa se kreira graf, ki prikazuje meritve na pregleden način. 
+            Poleg tega se uporabniku na koncu izpiše kratka diagnoza in možnost, da aplikacija prikaže bližnje zdravstvene objekte.
+            </p>
             <!-- KONEC: Opis ideje, ki jo aplikacija podpira -->
           </div>
         </div>
@@ -56,7 +71,18 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Uporabljeni zunanji viri podatkov -->
-            <p><strong>TO-DO</strong>: Na tem mestu je navesti zunanji vir podatkov (URL naslov), na kakšen način ste ga uporabili (neposredni API klic, uvožena statična datoteka ipd.) in kaj je bil namen uporabe (kako se vključuje v osnovno idejo aplikacije).</p>
+            <p>
+            Za zunanji vir sem želel uporabiti porazdelitev populacije glede na višino krvnega tlaka in uporabniku pokazati v kateri del 
+            populacije spada, vendar tako natančnih statističnih podatkov nisem našel. Našel sem le delež populacije, ki ima zvišan srčni tlak, 
+            ne pa tudi kolikšen del ima srčni tlak 120, kolikšen del ima 125, itd.
+            <p>
+            </p>
+            Zato sem se odločil uporabiti <strong>Google Maps JavaScript API</strong> (https://developers.google.com/maps/documentation/javascript/). 
+            Z neposrednim klicem API klicem in vključitvijo knjižnjice Google Places JavaScript Library (https://developers.google.com/places/javascript/), 
+            sem aplikaciji dodal funckionalnost, da poišče uporabnikovo lokacijo in mu prikaže najbližje zdravstvene objekte. 
+            Če je uporabnik bolnik, ki je že bil pri zdravniku in mu je le-ta potrdil, da ima nevaren krvni tlak, lahko izbere prikaz najbližnjih lekarn za nakup zdravil, ki jih potrebuje.
+            Če je uporabnik nekdo, ki si meri tlak, da si preveri trenutno stanje in se izkaže, da ima nevaren krvni tlak, lahko izbere prikaz bližnjih bolnišnic, kjer mu bo zdravnik svetoval za nadaljne ukrape.
+            </p>
             <!-- KONEC: Uporabljeni zunanji viri podatkov -->
           </div>
         </div>
@@ -66,7 +92,11 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Master/detail načrtovalski vzorec -->
-            <p><strong>TO-DO</strong>: Na tem mestu morate navesti uporabljen master/detail načrtovalski vzorec in na kakšen način ga nameravate uporabiti.</p>
+            <p>
+            Master/detail načrtovalski vzorec sem uporabil pri prikazu meritev, kjer uporabnik lahko klikne na čas in datum meritve, 
+            nato pa se mu pokaže vrednost diastoličnega (spodnjega) in sistoličnega (zgornjega) krvnega tlaka, ki je bil izmerjen ob tem času.
+            Prav tako sem vzorec uporabil še na grafu, kjer se ob poziciji miškinega kazalca nad točko v grafu izpiše datum, čas in vrednost meritve v tej točki. 
+            </p>
             <!-- KONEC: Master/detail načrtovalski vzorec -->
           </div>
         </div>
@@ -76,7 +106,13 @@
           </div>
           <div class="panel-body">
             <!-- ZAČETEK: Uporabljeni zunanji viri podatkov -->
-            <p><strong>TO-DO</strong>: Na tem mestu je potrebno navesti uporabljeno tehniko vizualizacije podatkov (za pomoč lahko uporabite primer iz <a href="https://github.com/mbostock/d3/wiki/Gallery" target="_blank">D3.js galerije</a>) in zakaj je bila ta tehnika izbrana.</p>
+            <p>
+            Pri vizualizaciji podatkov sem uporabil knjižnjico <strong>AmCharts</strong> (https://www.amcharts.com/). Izbral sem jo kot alternativo predlagani D3 knjiznjici, 
+            ker se mi je zdela bolj razumljiva in enostavna za uporabo, vednar za moje potrebe še vedno zadosti obsežna in podrobna. Z pomočjo te knjižnjice sem naredil črtni graf 
+            na katerem sta dve krivulji (spodnji in zgornji krvni tlak) z točkami, ki prikazujejo meritve ob določenem dnevu in času.
+            Na grafu sem prikazal še razpon normalnega zgornjega in spodnjega tlaka, tako, da lahko uporabnik hitro in razločno vidi, če in kje je prekoračil mejo. 
+            Takšno tehniko vizualizacije sem uporabil, ker tudi zdravnik ponavadi zahteva graf višine tlaka v odvisnosti od dneva in časa, da lahko hitro oceni stanje bolnika. 
+            </p>
             <!-- KONEC: Uporabljeni zunanji viri podatkov -->
           </div>
         </div>
